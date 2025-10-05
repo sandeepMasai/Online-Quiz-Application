@@ -1,43 +1,61 @@
-
 import express from "express";
 import mongoose from "mongoose";
 import dotenv from "dotenv";
 import cors from "cors";
+import cookieParser from "cookie-parser";
 
 import authRoutes from "./routes/auth.routes.js";
 import userRoutes from "./routes/user.routes.js";
 import questionRoutes from "./routes/question.routes.js";
 import assessmentRoutes from "./routes/assessment.routes.js";
 import resultRoutes from "./routes/result.routes.js";
-import cookieParser from "cookie-parser";
+
+// Load environment variables
 dotenv.config();
 
 const app = express();
-app.use(cookieParser());
+const PORT = process.env.PORT || 5000;
 
-// Allow frontend origin with credentials
+// Middleware: Parse cookies and JSON
+app.use(cookieParser());
+app.use(express.json());
+
+// ✅ Allowed frontend URLs
+const allowedOrigins = [
+  "http://localhost:5173", // Local dev frontend
+  "https://online-quiz-application-1-un43.onrender.com", // Deployed frontend
+];
+
+// ✅ CORS setup
 app.use(
   cors({
-    origin: "http://localhost:5173", // frontend URL
+    origin: function (origin, callback) {
+      if (!origin || allowedOrigins.includes(origin)) {
+        callback(null, true);
+      } else {
+        callback(new Error("CORS not allowed from this origin: " + origin));
+      }
+    },
+    credentials: true,
     methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
-    credentials: true, // Allow cookies/auth headers
   })
 );
 
-app.use(cors());
-app.use(express.json());
-
-// Routes
+// ✅ API Routes
 app.use("/api/auth", authRoutes);
 app.use("/api/users", userRoutes);
 app.use("/api/questions", questionRoutes);
 app.use("/api/assessments", assessmentRoutes);
 app.use("/api/results", resultRoutes);
 
-const PORT = process.env.PORT || 5000;
+// ✅ MongoDB connection and server start
 mongoose
   .connect(process.env.MONGO_URI)
   .then(() => {
-    app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
+    app.listen(PORT, () => {
+      console.log(`✅ Server running on port ${PORT}`);
+    });
   })
-  .catch((err) => console.error("MongoDB connection error:", err));
+  .catch((err) => {
+    console.error("❌ MongoDB connection error:", err);
+  });
