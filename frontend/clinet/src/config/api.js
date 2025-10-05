@@ -1,4 +1,4 @@
-export const API_URL = 'http://localhost:5000/api';
+export const API_URL = 'https://online-quiz-application-zy68.onrender.com/api';
 
 export const api = {
   async request(endpoint, options = {}) {
