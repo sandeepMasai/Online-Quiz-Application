@@ -58,7 +58,6 @@
 //     console.error("❌ MongoDB connection error:", err);
 //   });
 
-
 import express from "express";
 import mongoose from "mongoose";
 import dotenv from "dotenv";
@@ -77,22 +76,33 @@ dotenv.config();
 const app = express();
 const PORT = process.env.PORT || 5000;
 
-app.use(
-  cors({
-    origin: [
-      'http://localhost:5173',
-      'https://ai-powered-interview-mfag.onrender.com',
-      'https://online-quiz-application-1-un43.onrender.com',
-    ],
-    methods: ['POST', 'GET', 'DELETE', 'PUT', 'PATCH', 'OPTIONS'],
-    credentials: true,
-  })
-);
+// ✅ CORS Configuration - FIXED
+const allowedOrigins = [
+  "http://localhost:5173",
+  "https://online-quiz-application-1-un43.onrender.com",
+  "https://ai-powered-interview-mfag.onrender.com",
+];
+
+app.use(cors({
+  origin: function (origin, callback) {
+    // Allow requests with no origin (like mobile apps, curl requests)
+    if (!origin) return callback(null, true);
+    
+    if (allowedOrigins.includes(origin)) {
+      callback(null, true);
+    } else {
+      console.log("CORS blocked for origin:", origin);
+      callback(new Error("Not allowed by CORS"));
+    }
+  },
+  credentials: true,
+  methods: ["GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"],
+  allowedHeaders: ["Content-Type", "Authorization", "X-Requested-With"]
+}));
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
-
 
 // ✅ Health check route
 app.get("/", (req, res) => {
