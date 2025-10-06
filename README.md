@@ -1,6 +1,8 @@
 Assessment Portal Frontend
 A React-based frontend for the Assessment Management System.
 
+
+
 Features
 Authentication: Login and Registration with JWT
 Role-Based Access: Admin and Student dashboards
@@ -12,7 +14,40 @@ Student Features:
 Take timed assessments
 Navigate between questions
 View results after submission
-Setup Instructions
+Setup Instructions# 🧠 Assessment Portal Frontend
+
+A **React-based frontend** for the **Assessment Management System** that provides role-based dashboards for administrators and students.  
+Admins can manage questions and categories, while students can take timed assessments and view results.
+
+---
+
+## 🚀 Features
+
+### 🔐 Authentication
+- Secure login and registration using **JWT**
+- Persistent authentication with context-based state management
+
+### 🧑‍💼 Admin Features
+- Create, edit, and delete questions
+- Manage multiple categories:
+  - React, JavaScript, HTML, CSS, Node.js, MongoDB, SQL, DSA
+- Add difficulty levels and tags
+- Dashboard overview of question bank
+
+### 🎓 Student Features
+- Take **timed assessments**
+- Navigate between questions
+- Submit quiz and view results
+- Real-time progress tracking
+
+---
+
+## ⚙️ Setup Instructions
+
+### 1️⃣ Install Dependencies
+```bash
+npm install
+
 1. Install Dependencies
 npm install
 2. Configure Backend URL
@@ -64,7 +99,4 @@ After registering, you can create an admin account with role "admin" to access t
 Students can register with role "student" to take assessments.
 
 
-![Login Page](screenshots/login.png)
-![Admin Dashboard](screenshots/admin-dashboard.png)
-![Student Assessment](screenshots/student-assessment.png)
 
