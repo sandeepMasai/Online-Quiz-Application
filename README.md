@@ -62,3 +62,9 @@ Default Test Credentials
 After registering, you can create an admin account with role "admin" to access the question management dashboard.
 
 Students can register with role "student" to take assessments.
+
+
+![Login Page](screenshots/login.png)
+![Admin Dashboard](screenshots/admin-dashboard.png)
+![Student Assessment](screenshots/student-assessment.png)
+
