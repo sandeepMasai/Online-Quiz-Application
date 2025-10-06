@@ -77,33 +77,22 @@ dotenv.config();
 const app = express();
 const PORT = process.env.PORT || 5000;
 
-// ✅ Middleware
-app.use(cookieParser());
-app.use(express.json());
-
-// ✅ CORS Configuration (Fixed)
-const allowedOrigins = [
-  "http://localhost:5173", // Local frontend
-  "https://online-quiz-application-1-un43.onrender.com" // Deployed frontend
-];
-
 app.use(
   cors({
-    origin: function (origin, callback) {
-      // Allow requests with no origin (like mobile apps, Postman, etc.)
-      if (!origin || allowedOrigins.includes(origin)) {
-        callback(null, true);
-      } else {
-        console.warn("🚫 Blocked by CORS:", origin);
-        callback(new Error("Not allowed by CORS"));
-      }
-    },
+    origin: [
+      'http://localhost:5173',
+      'https://ai-powered-interview-mfag.onrender.com',
+      'https://online-quiz-application-1-un43.onrender.com',
+    ],
+    methods: ['POST', 'GET', 'DELETE', 'PUT', 'PATCH', 'OPTIONS'],
     credentials: true,
   })
 );
 
-// ✅ Handle preflight OPTIONS requests for all routes
-app.options("*", cors());
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
+app.use(cookieParser());
+
 
 // ✅ Health check route
 app.get("/", (req, res) => {
