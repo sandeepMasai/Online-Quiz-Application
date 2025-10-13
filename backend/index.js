@@ -1,4 +1,5 @@
 import express from "express";
+import mongoose from "mongoose";
 import dotenv from "dotenv";
 import cors from "cors";
 import cookieParser from "cookie-parser";
@@ -11,29 +12,30 @@ import questionRoutes from "./routes/question.routes.js";
 import assessmentRoutes from "./routes/assessment.routes.js";
 import resultRoutes from "./routes/result.routes.js";
 
-// ✅ Load environment variables
 dotenv.config();
-
-// ✅ Connect to MongoDB
 connectDB();
 
 const app = express();
 const PORT = process.env.PORT || 5000;
 
-// ✅ CORS Configuration
+// ✅ Allowed Origins (Frontend URLs)
 const allowedOrigins = [
-  "http://localhost:5173",
-  "https://online-quiz-application-1-un43.onrender.com",
-  "https://ai-powered-interview-mfag.onrender.com",
+  "http://localhost:5173", // Local dev
+  "https://online-quiz-application-1-un43.onrender.com", // Your frontend (Render)
+  "https://ai-powered-interview-mfag.onrender.com", // Optional (secondary)
 ];
 
+// ✅ CORS Middleware
 app.use(
   cors({
     origin: function (origin, callback) {
-      if (!origin) return callback(null, true); // allow Postman / server requests
-      if (allowedOrigins.includes(origin)) return callback(null, true);
-      console.log("CORS blocked for origin:", origin);
-      callback(new Error("Not allowed by CORS"));
+      if (!origin) return callback(null, true); // allow non-browser tools
+      if (allowedOrigins.includes(origin)) {
+        callback(null, true);
+      } else {
+        console.log("❌ CORS Blocked for origin:", origin);
+        callback(new Error("Not allowed by CORS"));
+      }
     },
     credentials: true,
     methods: ["GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"],
@@ -41,14 +43,20 @@ app.use(
   })
 );
 
-// ✅ Middleware
+// ✅ Global Middlewares
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
 
-// ✅ Health check route
+// ✅ Debug — log incoming origin
+app.use((req, res, next) => {
+  console.log("🌍 Request Origin:", req.headers.origin);
+  next();
+});
+
+// ✅ Health Check Route
 app.get("/", (req, res) => {
-  res.send("🚀 Assessment Portal Backend is running successfully!");
+  res.send("🚀 Online Quiz Backend running successfully!");
 });
 
 // ✅ Routes
@@ -58,27 +66,27 @@ app.use("/api/questions", questionRoutes);
 app.use("/api/assessments", assessmentRoutes);
 app.use("/api/results", resultRoutes);
 
-// ✅ 404 fallback
+// ✅ 404 Fallback
 app.use((req, res) => {
   res.status(404).json({ message: "Route not found" });
 });
 
-// ✅ Error handler middleware
+// ✅ Error Handler
 app.use((err, req, res, next) => {
   console.error("🔥 Error:", err.message);
-  res.status(500).json({ message: "Internal Server Error", error: err.message });
+  res
+    .status(500)
+    .json({ message: "Internal Server Error", error: err.message });
 });
 
-// ✅ Start server only after DB connection is ready
-const startServer = async () => {
-  try {
-    await connectDB(); // ensure MongoDB connected
+// ✅ MongoDB Connection
+mongoose
+  .connect(process.env.MONGO_URI)
+  .then(() => {
     app.listen(PORT, () => {
       console.log(`✅ Server running on port ${PORT}`);
     });
-  } catch (err) {
-    console.error("❌ Failed to start server:", err.message);
-  }
-};
-
-startServer();
+  })
+  .catch((err) => {
+    console.error("❌ MongoDB connection error:", err);
+  });
