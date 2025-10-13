@@ -20,7 +20,6 @@ const PORT = process.env.PORT || 5000;
 
 // ✅ Allowed Origins (Frontend URLs)
 const allowedOrigins = [
-  "http://localhost:5173", // Local dev
   "https://online-quiz-application-1-un43.onrender.com", // Your frontend (Render)
   "https://ai-powered-interview-mfag.onrender.com", // Optional (secondary)
 ];
