@@ -1,5 +1,6 @@
 // controllers/user.controller.js
 import User from "../models/User.js";
+import mongoose from "mongoose";
 
 // ✅ All users (Admin/HR only)
 export const getUsers = async (req, res) => {
@@ -14,6 +15,14 @@ export const getUsers = async (req, res) => {
 // ✅ Current logged in user (Student/HR/Admin)
 export const getUserProfile = async (req, res) => {
   try {
+    if (!req.user || !req.user.id) {
+      return res.status(401).json({ message: "User not authenticated" });
+    }
+
+    if (!mongoose.Types.ObjectId.isValid(req.user.id)) {
+      return res.status(400).json({ message: "Invalid user ID format" });
+    }
+
     const user = await User.findById(req.user.id).select("-password");
     if (!user) return res.status(404).json({ message: "User not found" });
 
@@ -31,6 +40,10 @@ export const getUserProfile = async (req, res) => {
 // ✅ Delete user (Admin only)
 export const deleteUser = async (req, res) => {
   try {
+    if (!mongoose.Types.ObjectId.isValid(req.params.id)) {
+      return res.status(400).json({ message: "Invalid user ID format" });
+    }
+
     const deleted = await User.findByIdAndDelete(req.params.id);
     if (!deleted) return res.status(404).json({ message: "User not found" });
 

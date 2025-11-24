@@ -1,7 +1,8 @@
 import express from "express";
 import dotenv from "dotenv";
 import cookieParser from "cookie-parser";
-import cors from "cors"; // ✅ add this
+import cors from "cors";
+import mongoose from "mongoose";
 import connectDB from "./config/db.js";
 
 // Import Routes
@@ -20,7 +21,9 @@ const PORT = process.env.PORT || 5000;
 // ✅ Allow CORS (Frontend domain)
 app.use(cors({
   origin: [
-    "https://online-quiz-application-1-un43.onrender.com", // your frontend domain
+    "https://online-quiz-application-1-un43.onrender.com", // production frontend domain
+    "http://localhost:5173", // Vite default port
+    "http://localhost:3000", // React default port
   ],
   credentials: true, // if using cookies or auth headers
 }));
@@ -32,13 +35,13 @@ app.use(cookieParser());
 
 // ✅ Debug request origins
 app.use((req, res, next) => {
-  console.log("🌍 Incoming request from:", req.headers.origin || "Unknown Origin");
+  console.log(" Incoming request from:", req.headers.origin || "Unknown Origin");
   next();
 });
 
 // ✅ Routes
 app.get("/", (req, res) => {
-  res.send("🚀 Online Quiz Backend running successfully!");
+  res.send(" Online Quiz Backend running successfully!");
 });
 
 app.use("/api/auth", authRoutes);
@@ -56,7 +59,6 @@ app.use((err, req, res, next) => {
 });
 
 // ✅ Start Server
-import mongoose from "mongoose";
 mongoose.connection.once("open", () => {
   app.listen(PORT, () => console.log(`✅ Server running on port ${PORT}`));
 });

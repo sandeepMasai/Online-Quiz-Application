@@ -1,5 +1,5 @@
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { Play, Clock, CheckCircle, AlertCircle, History, Award, Target, TrendingUp } from 'lucide-react';
 import { api } from '../config/api';
 
@@ -43,22 +43,8 @@ export default function StudentDashboard() {
     }
   };
 
-  useEffect(() => {
-    if (view === 'taking' && timeLeft > 0) {
-      const timer = setInterval(() => {
-        setTimeLeft(t => {
-          if (t <= 1) {
-            submitAssessment();
-            return 0;
-          }
-          return t - 1;
-        });
-      }, 1000);
-      return () => clearInterval(timer);
-    }
-  }, [view, timeLeft]);
-
-  const submitAssessment = async () => {
+  const submitAssessment = useCallback(async () => {
+    if (!assessment) return;
     try {
       const result = await api.request('/results/submit', {
         method: 'POST',
@@ -72,34 +58,80 @@ export default function StudentDashboard() {
     } catch (err) {
       alert(err.message);
     }
-  };
+  }, [assessment, answers]);
+
+  useEffect(() => {
+    if (view === 'taking' && timeLeft > 0 && assessment) {
+      const timer = setInterval(() => {
+        setTimeLeft(t => {
+          if (t <= 1) {
+            submitAssessment();
+            return 0;
+          }
+          return t - 1;
+        });
+      }, 1000);
+      return () => clearInterval(timer);
+    }
+  }, [view, timeLeft, assessment, submitAssessment]);
 
   // START VIEW - Dashboard with categories
   if (view === 'start') {
+    const categories = [
+      { name: 'react', icon: '⚛️', color: 'from-blue-500 to-cyan-500' },
+      { name: 'javascript', icon: '📜', color: 'from-yellow-500 to-orange-500' },
+      { name: 'html', icon: '🌐', color: 'from-orange-500 to-red-500' },
+      { name: 'css', icon: '🎨', color: 'from-blue-400 to-indigo-500' },
+      { name: 'node', icon: '🟢', color: 'from-green-500 to-emerald-500' },
+      { name: 'mongodb', icon: '🍃', color: 'from-green-600 to-teal-600' },
+      { name: 'sql', icon: '🗄️', color: 'from-purple-500 to-pink-500' },
+      { name: 'dsa', icon: '🧮', color: 'from-indigo-500 to-purple-500' },
+    ];
+
     return (
-      <div className="p-6">
-        <div className="flex justify-between items-center mb-6">
-          <h1 className="text-3xl font-bold text-gray-800">Start Assessment</h1>
+      <div className="p-6 max-w-7xl mx-auto">
+        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-8 gap-4">
+          <div>
+            <h1 className="text-4xl font-bold bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent mb-2">
+              Start Assessment
+            </h1>
+            <p className="text-gray-500">Choose a category and test your knowledge</p>
+          </div>
           <button
             onClick={() => setView('history')}
-            className="bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 flex items-center transition"
+            className="bg-gradient-to-r from-green-600 to-emerald-600 text-white px-6 py-3 rounded-xl hover:from-green-700 hover:to-emerald-700 flex items-center transition-all transform hover:scale-105 shadow-lg hover:shadow-xl font-semibold"
           >
             <History className="w-5 h-5 mr-2" />
             View Results
           </button>
         </div>
         <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
-          {['react', 'javascript', 'html', 'css', 'node', 'mongodb', 'sql', 'dsa'].map(category => (
-            <div key={category} className="bg-white rounded-lg shadow-md p-6 hover:shadow-xl transition">
-              <h3 className="text-xl font-bold mb-4 capitalize text-gray-800">{category}</h3>
-              <div className="text-sm text-gray-600 mb-4">
-                <p>• 10 Questions</p>
-                <p>• 15 Minutes</p>
-                <p>• Pass: 75%</p>
+          {categories.map(({ name, icon, color }) => (
+            <div
+              key={name}
+              className="bg-white rounded-2xl shadow-lg p-6 hover:shadow-2xl transition-all transform hover:scale-105 border border-gray-100 group"
+            >
+              <div className={`w-16 h-16 rounded-xl bg-gradient-to-br ${color} flex items-center justify-center text-3xl mb-4 group-hover:scale-110 transition-transform`}>
+                {icon}
+              </div>
+              <h3 className="text-2xl font-bold mb-4 capitalize text-gray-800">{name}</h3>
+              <div className="space-y-2 text-sm text-gray-600 mb-6">
+                <div className="flex items-center">
+                  <span className="w-2 h-2 bg-blue-500 rounded-full mr-2"></span>
+                  <span>10 Questions</span>
+                </div>
+                <div className="flex items-center">
+                  <Clock className="w-4 h-4 mr-2 text-gray-400" />
+                  <span>15 Minutes</span>
+                </div>
+                <div className="flex items-center">
+                  <Target className="w-4 h-4 mr-2 text-gray-400" />
+                  <span>Pass: 75%</span>
+                </div>
               </div>
               <button
-                onClick={() => startAssessment(category, 10, 15)}
-                className="w-full bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700 flex items-center justify-center transition"
+                onClick={() => startAssessment(name, 10, 15)}
+                className={`w-full bg-gradient-to-r ${color} text-white py-3 rounded-xl hover:shadow-lg flex items-center justify-center transition-all transform hover:scale-105 font-semibold`}
               >
                 <Play className="w-5 h-5 mr-2" />
                 Start Test
@@ -118,8 +150,8 @@ export default function StudentDashboard() {
     const seconds = timeLeft % 60;
 
     return (
-      <div className="p-6 max-w-4xl mx-auto">
-        <div className="bg-white rounded-lg shadow-md p-6 mb-4">
+      <div className="p-6 max-w-5xl mx-auto">
+        <div className="bg-white rounded-2xl shadow-2xl p-8 mb-6 border border-gray-100">
           {/* Header with progress and timer */}
           <div className="flex justify-between items-center mb-6">
             <div>
@@ -133,7 +165,10 @@ export default function StudentDashboard() {
                 />
               </div>
             </div>
-            <div className="flex items-center text-red-600 font-semibold ml-6">
+            <div className={`flex items-center font-bold ml-6 px-4 py-2 rounded-xl ${timeLeft < 300 ? 'bg-red-100 text-red-700 animate-pulse' :
+              timeLeft < 600 ? 'bg-yellow-100 text-yellow-700' :
+                'bg-green-100 text-green-700'
+              }`}>
               <Clock className="w-6 h-6 mr-2" />
               <span className="text-2xl">
                 {minutes}:{seconds.toString().padStart(2, '0')}
@@ -142,67 +177,72 @@ export default function StudentDashboard() {
           </div>
 
           {/* Question */}
-          <h2 className="text-xl font-bold mb-6">{question.text}</h2>
+          <div className="bg-gradient-to-r from-blue-50 to-indigo-50 rounded-xl p-6 mb-6">
+            <h2 className="text-2xl font-bold text-gray-800 leading-relaxed">{question.text}</h2>
+          </div>
 
           {/* Options */}
-          <div className="space-y-3">
+          <div className="space-y-4">
             {question.options.map((opt, i) => (
               <button
                 key={i}
                 onClick={() => setAnswers({ ...answers, [question._id]: i })}
-                className={`w-full p-4 text-left rounded-lg border-2 transition ${
-                  answers[question._id] === i
-                    ? 'border-blue-600 bg-blue-50 font-semibold'
-                    : 'border-gray-200 hover:border-blue-300 hover:bg-gray-50'
-                }`}
+                className={`w-full p-5 text-left rounded-xl border-2 transition-all transform hover:scale-[1.02] ${answers[question._id] === i
+                  ? 'border-blue-600 bg-gradient-to-r from-blue-50 to-indigo-50 font-semibold shadow-md'
+                  : 'border-gray-200 hover:border-blue-400 hover:bg-gray-50 hover:shadow-sm'
+                  }`}
               >
-                <span className="font-semibold mr-3">{String.fromCharCode(65 + i)}.</span>
-                {opt}
+                <span className={`inline-flex items-center justify-center w-8 h-8 rounded-full mr-4 font-bold ${answers[question._id] === i
+                  ? 'bg-blue-600 text-white'
+                  : 'bg-gray-200 text-gray-700'
+                  }`}>
+                  {String.fromCharCode(65 + i)}
+                </span>
+                <span className="text-gray-800">{opt}</span>
               </button>
             ))}
           </div>
 
           {/* Navigation */}
-          <div className="flex justify-between mt-6">
+          <div className="flex justify-between mt-8 pt-6 border-t border-gray-200">
             <button
               onClick={() => setCurrentQuestion(Math.max(0, currentQuestion - 1))}
               disabled={currentQuestion === 0}
-              className="px-6 py-2 bg-gray-300 text-gray-700 rounded-lg hover:bg-gray-400 disabled:opacity-50 disabled:cursor-not-allowed transition"
+              className="px-8 py-3 bg-gray-200 text-gray-700 rounded-xl hover:bg-gray-300 disabled:opacity-50 disabled:cursor-not-allowed transition-all transform hover:scale-105 font-semibold"
             >
-              Previous
+              ← Previous
             </button>
             {currentQuestion < assessment.questions.length - 1 ? (
               <button
                 onClick={() => setCurrentQuestion(currentQuestion + 1)}
-                className="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition"
+                className="px-8 py-3 bg-gradient-to-r from-blue-600 to-indigo-600 text-white rounded-xl hover:from-blue-700 hover:to-indigo-700 transition-all transform hover:scale-105 shadow-lg hover:shadow-xl font-semibold"
               >
-                Next
+                Next →
               </button>
             ) : (
               <button
                 onClick={submitAssessment}
-                className="px-6 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 font-semibold transition"
+                className="px-8 py-3 bg-gradient-to-r from-green-600 to-emerald-600 text-white rounded-xl hover:from-green-700 hover:to-emerald-700 font-semibold transition-all transform hover:scale-105 shadow-lg hover:shadow-xl"
               >
-                Submit Assessment
+                ✓ Submit Assessment
               </button>
             )}
           </div>
 
           {/* Question palette */}
-          <div className="mt-6 pt-6 border-t">
-            <p className="text-sm text-gray-600 mb-3">Question Palette:</p>
-            <div className="flex flex-wrap gap-2">
+          <div className="mt-8 pt-6 border-t border-gray-200">
+            <p className="text-sm font-semibold text-gray-700 mb-4">Question Palette:</p>
+            <div className="flex flex-wrap gap-3">
               {assessment.questions.map((q, i) => (
                 <button
                   key={i}
                   onClick={() => setCurrentQuestion(i)}
-                  className={`w-10 h-10 rounded-lg font-semibold transition ${
-                    i === currentQuestion
-                      ? 'bg-blue-600 text-white'
-                      : answers[q._id] !== undefined
-                      ? 'bg-green-100 text-green-700 border-2 border-green-300'
-                      : 'bg-gray-100 text-gray-700 border-2 border-gray-300'
-                  }`}
+                  className={`w-12 h-12 rounded-xl font-bold transition-all transform hover:scale-110 ${i === currentQuestion
+                    ? 'bg-gradient-to-br from-blue-600 to-indigo-600 text-white shadow-lg scale-110'
+                    : answers[q._id] !== undefined
+                      ? 'bg-green-100 text-green-700 border-2 border-green-400 hover:bg-green-200'
+                      : 'bg-gray-100 text-gray-700 border-2 border-gray-300 hover:bg-gray-200'
+                    }`}
                 >
                   {i + 1}
                 </button>
@@ -352,7 +392,7 @@ export default function StudentDashboard() {
               <div className="flex justify-between items-center mb-2">
                 <span className="text-gray-700 font-semibold">Accuracy Rate</span>
                 <span className="font-bold text-gray-800">
-                  {result.attempted > 0 
+                  {result.attempted > 0
                     ? Math.round((result.correct / result.attempted) * 100)
                     : 0}%
                 </span>
@@ -360,10 +400,10 @@ export default function StudentDashboard() {
               <div className="w-full bg-gray-200 rounded-full h-3 overflow-hidden">
                 <div
                   className="bg-green-600 h-full rounded-full transition-all duration-1000"
-                  style={{ 
-                    width: `${result.attempted > 0 
-                      ? (result.correct / result.attempted) * 100 
-                      : 0}%` 
+                  style={{
+                    width: `${result.attempted > 0
+                      ? (result.correct / result.attempted) * 100
+                      : 0}%`
                   }}
                 />
               </div>
@@ -490,7 +530,7 @@ export default function StudentDashboard() {
                     <p className="text-sm text-gray-600">Score</p>
                   </div>
                 </div>
-                
+
                 {/* Statistics */}
                 <div className="grid grid-cols-2 md:grid-cols-5 gap-3 mb-4">
                   <div className="bg-green-50 border border-green-200 p-3 rounded-lg text-center">
@@ -531,12 +571,12 @@ export default function StudentDashboard() {
                       />
                     </div>
                   </div>
-                  
+
                   <div>
                     <div className="flex justify-between text-sm mb-1">
                       <span className="text-gray-600">Accuracy</span>
                       <span className="font-semibold">
-                        {res.attempted > 0 
+                        {res.attempted > 0
                           ? Math.round((res.correct / res.attempted) * 100)
                           : 0}%
                       </span>
@@ -544,10 +584,10 @@ export default function StudentDashboard() {
                     <div className="w-full bg-gray-200 rounded-full h-2">
                       <div
                         className="bg-green-600 h-2 rounded-full transition-all"
-                        style={{ 
-                          width: `${res.attempted > 0 
-                            ? (res.correct / res.attempted) * 100 
-                            : 0}%` 
+                        style={{
+                          width: `${res.attempted > 0
+                            ? (res.correct / res.attempted) * 100
+                            : 0}%`
                         }}
                       />
                     </div>

@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useAuth } from '../context/AuthContext';
-import { BarChart3, Trophy, Clock, CheckCircle, XCircle, Calendar } from 'lucide-react';
-import toast from 'react-hot-toast';
+import { BarChart3, Trophy, Clock, CheckCircle, XCircle, Calendar, AlertCircle } from 'lucide-react';
 
 const Results = () => {
   const { user, token } = useAuth();
@@ -11,6 +10,7 @@ const Results = () => {
 
   useEffect(() => {
     fetchResults();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const fetchResults = async () => {
@@ -25,11 +25,10 @@ const Results = () => {
         const data = await response.json();
         setResults(data);
       } else {
-        toast.error('Failed to fetch results');
+        console.error('Failed to fetch results');
       }
     } catch (error) {
-      toast.error('Failed to fetch results');
-      console.error(error);
+      console.error('Failed to fetch results', error);
     } finally {
       setLoading(false);
     }
@@ -104,11 +103,10 @@ const Results = () => {
             <div key={i} className="bg-white p-4 rounded-lg shadow border">
               <div className="flex justify-between items-start mb-2">
                 <h3 className="font-medium">{i + 1}. {answer.question.text}</h3>
-                <span className={`px-2 py-1 text-sm rounded-full ${
-                  answer.correct ? "bg-green-100 text-green-700"
-                  : answer.skipped ? "bg-gray-100 text-gray-700"
-                  : "bg-red-100 text-red-700"
-                }`}>
+                <span className={`px-2 py-1 text-sm rounded-full ${answer.correct ? "bg-green-100 text-green-700"
+                    : answer.skipped ? "bg-gray-100 text-gray-700"
+                      : "bg-red-100 text-red-700"
+                  }`}>
                   {answer.correct ? "Correct" : answer.skipped ? "Skipped" : "Incorrect"}
                 </span>
               </div>
@@ -120,12 +118,11 @@ const Results = () => {
                   return (
                     <div
                       key={idx}
-                      className={`p-2 rounded border flex items-center justify-between ${
-                        isCorrect ? "bg-green-50 border-green-200"
-                        : isSelected && !isCorrect ? "bg-red-50 border-red-200"
-                        : isSelected ? "bg-blue-50 border-blue-200"
-                        : "bg-gray-50 border-gray-200"
-                      }`}
+                      className={`p-2 rounded border flex items-center justify-between ${isCorrect ? "bg-green-50 border-green-200"
+                          : isSelected && !isCorrect ? "bg-red-50 border-red-200"
+                            : isSelected ? "bg-blue-50 border-blue-200"
+                              : "bg-gray-50 border-gray-200"
+                        }`}
                     >
                       <span>{opt}</span>
                       {isCorrect && <CheckCircle className="w-4 h-4 text-green-600" />}
@@ -143,23 +140,28 @@ const Results = () => {
 
   // ---------- LIST VIEW ----------
   return (
-    <div className="max-w-5xl mx-auto px-4 py-8">
-      <h1 className="text-2xl font-bold mb-2">Assessment Results</h1>
-      <p className="text-gray-600 mb-6">
-        {user?.role === 'student' ? 'Your past assessments' : 'All assessment results'}
-      </p>
+    <div className="max-w-6xl mx-auto px-4 py-8">
+      <div className="mb-8">
+        <h1 className="text-4xl font-bold bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent mb-2">
+          Assessment Results
+        </h1>
+        <p className="text-gray-500">
+          {user?.role === 'student' ? 'Your past assessments' : 'All assessment results'}
+        </p>
+      </div>
 
       {results.length === 0 ? (
-        <div className="text-center py-12 text-gray-600">
-          <BarChart3 className="w-12 h-12 mx-auto mb-2 text-gray-400" />
-          No results yet
+        <div className="bg-white rounded-2xl shadow-lg p-12 text-center">
+          <BarChart3 className="w-16 h-16 mx-auto mb-4 text-gray-400" />
+          <p className="text-gray-600 text-xl mb-2">No results yet</p>
+          <p className="text-gray-400">Complete an assessment to see your results here</p>
         </div>
       ) : (
-        <div className="space-y-4">
+        <div className="space-y-6">
           {results.map((res) => (
             <div
               key={res._id}
-              className="bg-white p-4 rounded-lg shadow border hover:shadow-md transition"
+              className="bg-white p-6 rounded-2xl shadow-lg border border-gray-100 hover:shadow-xl transition-all transform hover:scale-[1.01]"
             >
               <div className="flex justify-between items-center">
                 <div>
@@ -186,9 +188,9 @@ const Results = () => {
                   </div>
                   <button
                     onClick={() => setSelectedResult(res)}
-                    className="mt-2 bg-blue-600 text-white px-3 py-1 rounded hover:bg-blue-700"
+                    className="mt-2 bg-gradient-to-r from-blue-600 to-indigo-600 text-white px-4 py-2 rounded-xl hover:from-blue-700 hover:to-indigo-700 transition-all transform hover:scale-105 shadow-md hover:shadow-lg font-semibold"
                   >
-                    View
+                    View Details
                   </button>
                 </div>
               </div>
