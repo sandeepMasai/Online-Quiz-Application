@@ -121,7 +121,7 @@ Before you begin, ensure you have the following installed:
 ### 1. Clone the Repository
 
 ```bash
-git clone <repository-url>
+git clone https://github.com/sandeepMasai/Online-Quiz-Application.git
 cd Online-Quiz-Application
 ```
 
@@ -387,7 +387,7 @@ After setting up, you can:
 
 1. **Register as Admin:**
    - Username: `admin`
-   - Email: `admin@example.com`
+   - Email: `admin@gmail.com`
    - Password: `admin123`
    - Role: `admin`
 
