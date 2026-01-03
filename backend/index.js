@@ -19,14 +19,16 @@ const app = express();
 const PORT = process.env.PORT || 5000;
 
 // Allow CORS (Frontend domain)
-app.use(cors({
-  origin: [
-    "https://online-quiz-application-1-un43.onrender.com", // production frontend domain
-    "http://localhost:5173", // Vite default port
-    "http://localhost:3000", // React default port
-  ],
-  credentials: true, // if using cookies or auth headers
-}));
+app.use(
+  cors({
+    origin: [
+      "https://online-quiz-application-1-un43.onrender.com", // production frontend domain
+      "http://localhost:5173", // Vite default port
+      "http://localhost:3000", // React default port
+    ],
+    credentials: true, // if using cookies or auth headers
+  })
+);
 
 //  Middleware setup
 app.use(express.json());
@@ -35,7 +37,10 @@ app.use(cookieParser());
 
 //  Debug request origins
 app.use((req, res, next) => {
-  console.log(" Incoming request from:", req.headers.origin || "Unknown Origin");
+  console.log(
+    " Incoming request from:",
+    req.headers.origin || "Unknown Origin"
+  );
   next();
 });
 
@@ -54,8 +59,10 @@ app.use("/api/results", resultRoutes);
 app.use((req, res) => res.status(404).json({ message: "Route not found" }));
 
 app.use((err, req, res, next) => {
-  console.error("🔥 Server Error:", err.message);
-  res.status(500).json({ message: "Internal Server Error", error: err.message });
+  console.error(" Server Error:", err.message);
+  res
+    .status(500)
+    .json({ message: "Internal Server Error", error: err.message });
 });
 
 //  Start Server
