@@ -51,11 +51,8 @@ export const createQuestion = async (req, res) => {
   }
 };
 
-/**
- * @desc    Get all questions (filter by category/difficulty optional)
- * @route   GET /api/questions
- * @access  Private
- */
+//    Get all questions (filter by category/difficulty optional)
+
 export const getQuestions = async (req, res) => {
   try {
     const { category, difficulty } = req.query;
@@ -70,11 +67,9 @@ export const getQuestions = async (req, res) => {
   }
 };
 
-/**
- * @desc    Get single question
- * @route   GET /api/questions/:id
- * @access  Private
- */
+  // Get single question
+//   GET /api/questions/:id
+ 
 export const getQuestionById = async (req, res) => {
   try {
     if (!mongoose.Types.ObjectId.isValid(req.params.id)) {
@@ -89,11 +84,8 @@ export const getQuestionById = async (req, res) => {
   }
 };
 
-/**
- * @desc    Update a question (Admin only)
- * @route   PUT /api/questions/:id
- * @access  Admin
- */
+//    Update a question (Admin only)
+
 export const updateQuestion = async (req, res) => {
   try {
     if (!mongoose.Types.ObjectId.isValid(req.params.id)) {
@@ -150,11 +142,9 @@ export const updateQuestion = async (req, res) => {
   }
 };
 
-/**
- * @desc    Delete a question (Admin only)
- * @route   DELETE /api/questions/:id
- * @access  Admin
- */
+
+//access  Admin
+
 export const deleteQuestion = async (req, res) => {
   try {
     if (!mongoose.Types.ObjectId.isValid(req.params.id)) {
