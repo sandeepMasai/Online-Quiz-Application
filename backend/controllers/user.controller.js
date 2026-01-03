@@ -1,8 +1,8 @@
-// controllers/user.controller.js
+
 import User from "../models/User.js";
 import mongoose from "mongoose";
 
-// ✅ All users (Admin/HR only)
+//  All users (Admin/HR only)
 export const getUsers = async (req, res) => {
   try {
     const users = await User.find().select("-password");
@@ -12,7 +12,7 @@ export const getUsers = async (req, res) => {
   }
 };
 
-// ✅ Current logged in user (Student/HR/Admin)
+//  Current logged in user (Student/HR/Admin)
 export const getUserProfile = async (req, res) => {
   try {
     if (!req.user || !req.user.id) {
@@ -37,7 +37,7 @@ export const getUserProfile = async (req, res) => {
   }
 };
 
-// ✅ Delete user (Admin only)
+//  Delete user (Admin only)
 export const deleteUser = async (req, res) => {
   try {
     if (!mongoose.Types.ObjectId.isValid(req.params.id)) {
