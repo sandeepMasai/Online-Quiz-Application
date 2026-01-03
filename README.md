@@ -424,17 +424,13 @@ npm run lint       # Run ESLint
 2. Ensure MongoDB connection string is configured
 3. Deploy to platforms like:
    - **Render**
-   - **Heroku**
-   - **Railway**
-   - **DigitalOcean**
+   
 
 ### Frontend Deployment
 1. Build the project: `npm run build`
 2. Deploy the `dist` folder to:
    - **Vercel**
-   - **Netlify**
-   - **GitHub Pages**
-   - **AWS S3 + CloudFront**
+   -
 
 ---
 
@@ -450,9 +446,7 @@ Contributions are welcome! Please follow these steps:
 
 ---
 
-## 📄 License
 
-This project is licensed under the ISC License.
 
 ---
 
@@ -471,9 +465,7 @@ This project is licensed under the ISC License.
 
 ---
 
-## 📞 Support
 
-For support, email your-email@example.com or create an issue in the repository.
 
 ---
 
