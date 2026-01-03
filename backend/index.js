@@ -18,7 +18,7 @@ connectDB();
 const app = express();
 const PORT = process.env.PORT || 5000;
 
-// ✅ Allow CORS (Frontend domain)
+// Allow CORS (Frontend domain)
 app.use(cors({
   origin: [
     "https://online-quiz-application-1-un43.onrender.com", // production frontend domain
@@ -28,18 +28,18 @@ app.use(cors({
   credentials: true, // if using cookies or auth headers
 }));
 
-// ✅ Middleware setup
+//  Middleware setup
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
 
-// ✅ Debug request origins
+//  Debug request origins
 app.use((req, res, next) => {
   console.log(" Incoming request from:", req.headers.origin || "Unknown Origin");
   next();
 });
 
-// ✅ Routes
+//  Routes
 app.get("/", (req, res) => {
   res.send(" Online Quiz Backend running successfully!");
 });
@@ -50,7 +50,7 @@ app.use("/api/questions", questionRoutes);
 app.use("/api/assessments", assessmentRoutes);
 app.use("/api/results", resultRoutes);
 
-// ✅ 404 and error handler
+//  404 and error handler
 app.use((req, res) => res.status(404).json({ message: "Route not found" }));
 
 app.use((err, req, res, next) => {
@@ -58,8 +58,8 @@ app.use((err, req, res, next) => {
   res.status(500).json({ message: "Internal Server Error", error: err.message });
 });
 
-// ✅ Start Server
+//  Start Server
 mongoose.connection.once("open", () => {
-  app.listen(PORT, () => console.log(`✅ Server running on port ${PORT}`));
+  app.listen(PORT, () => console.log(` Server running on port ${PORT}`));
 });
-mongoose.connection.on("error", (err) => console.error("❌ MongoDB error:", err));
+mongoose.connection.on("error", (err) => console.error(" MongoDB error:", err));
