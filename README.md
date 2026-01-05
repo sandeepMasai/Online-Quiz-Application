@@ -1,10 +1,38 @@
 # 🎯 Online Quiz Application
 
-A full-stack **Online Assessment Portal** built with React and Node.js, featuring role-based access control, real-time assessments, and comprehensive question management.
+# 🎯 Online Quiz Application
 
-![License](https://img.shields.io/badge/license-ISC-blue.svg)
-![Node](https://img.shields.io/badge/node-%3E%3D16.0.0-brightgreen.svg)
-![React](https://img.shields.io/badge/react-19.1.1-blue.svg)
+The Online Quiz Application is a full-stack assessment platform built using React and Node.js.
+It enables secure, role-based access for Admins and Students.
+JWT-based authentication ensures protected routes and session security.
+Admins can create, edit, and delete quiz questions efficiently.
+Questions are organized by categories such as React, JavaScript, HTML, CSS, Node.js, and DSA.
+Each question supports difficulty levels for adaptive assessment.
+Tag-based filtering improves question management.
+Students can attempt quizzes in a real-time, timed environment.
+A countdown timer enforces assessment duration.
+Automatic submission occurs when time expires.
+Students can navigate freely between questions.
+Answers are saved during navigation to prevent data loss.
+Results are calculated instantly after submission.
+Score and performance summaries are displayed clearly.
+Role-based dashboards provide tailored user experiences.
+Protected routes restrict unauthorized access.
+The frontend is built with React 18 and Vite for performance.
+Tailwind CSS ensures a responsive and modern UI.
+Lucide React icons enhance usability and design.
+The backend is powered by Node.js and Express.
+RESTful APIs handle authentication and quiz operations.
+MongoDB stores users, questions, and results.
+The system supports scalable assessment workflows.
+Clean folder architecture improves maintainability.
+Context API manages global authentication state.
+Reusable components promote code reusability.
+Error handling ensures smooth user experience.
+The application follows industry best practices.
+It is suitable for interviews, evaluations, and online exams.
+
+
 
 ---
 
