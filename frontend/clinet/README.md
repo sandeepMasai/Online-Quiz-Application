@@ -65,27 +65,3 @@ Built with **React + Vite**, the app focuses on performance, scalability, and ma
 
 ---
 
-## 📁 Project Structure
-
-src/
-├── components/
-│ ├── Login.jsx # Login component
-│ ├── Register.jsx # Registration component
-│ ├── Navbar.jsx # Navigation bar
-│ └── admin/
-│ ├── QuestionForm.jsx # Create/Edit question form
-│ └── QuestionList.jsx # Question listing
-│
-├── pages/
-│ ├── AdminDashboard.jsx # Admin dashboard
-│ └── StudentDashboard.jsx # Student dashboard
-│
-├── context/
-│ └── AuthContext.jsx # Authentication context
-│
-├── config/
-│ └── api.js # API configuration
-│
-├── App.jsx # Root component
-├── main.jsx # Application entry point
-└── index.css # Global styles
