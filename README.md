@@ -1,6 +1,6 @@
-# 🎯 Online Quiz Application
+#  Online Quiz Application
 
-# 🎯 Online Quiz Application
+
 
 The Online Quiz Application is a full-stack assessment platform built using React and Node.js.
 It enables secure, role-based access for Admins and Students.
